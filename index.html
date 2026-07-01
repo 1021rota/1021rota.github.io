@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Which Major Arcana Is Running Your Life?</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:#0d0b1a;color:#e8e0d0;font-family:'Jost',sans-serif;min-height:100vh}
@@ -21,13 +20,14 @@ body{background:#0d0b1a;color:#e8e0d0;font-family:'Jost',sans-serif;min-height:1
 .intro-icon{font-size:52px;text-align:center;margin-bottom:16px}
 .intro-title{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,7vw,50px);font-weight:600;line-height:1.15;text-align:center;margin-bottom:18px;background:linear-gradient(135deg,#f0d080,#c47a85);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .intro-sub{color:#8a82a0;font-size:15px;line-height:1.7;text-align:center;margin-bottom:10px}
-.intro-body{font-size:15px;line-height:1.75;text-align:center;margin-bottom:28px;color:#c8c0d8}
+.intro-body{font-size:15px;line-height:1.75;text-align:center;margin-bottom:28px}
 .pills{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
 .pill{color:#c9a84c;font-size:13px;display:flex;align-items:center;gap:6px}
-.pill-dot{color:#c47a85}
+.pill span{color:#c47a85}
 .prog-row{display:flex;justify-content:space-between;margin-bottom:8px}
-.prog-label{color:#8a82a0;font-size:13px}
-.prog-pct{color:#c9a84c;font-size:13px}
+.prog-label,.prog-pct{font-size:13px}
+.prog-label{color:#8a82a0}
+.prog-pct{color:#c9a84c}
 .prog-track{height:2px;background:#2e2857;border-radius:2px;margin-bottom:28px}
 .prog-fill{height:100%;background:linear-gradient(90deg,#c9a84c,#c47a85);border-radius:2px;transition:width .4s ease}
 .card{background:#14112b;border:1px solid #2e2857;border-radius:12px;padding:26px 22px;margin-bottom:18px}
@@ -43,11 +43,17 @@ body{background:#0d0b1a;color:#e8e0d0;font-family:'Jost',sans-serif;min-height:1
 .next-btn{background:linear-gradient(135deg,#c9a84c,#a07830);border:none;color:#0d0b1a;font-family:'Jost',sans-serif;font-size:15px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:13px 32px;border-radius:6px;cursor:pointer;transition:opacity .2s,transform .15s}
 .next-btn:hover:not(:disabled){opacity:.88;transform:scale(1.02)}
 .next-btn:disabled{opacity:.35;cursor:not-allowed}
-.form-label{display:block;font-size:12px;color:#8a82a0;letter-spacing:.08em;margin-bottom:6px;text-transform:uppercase}
+/* Contact form */
+.form-label{display:block;font-size:13px;color:#8a82a0;letter-spacing:.05em;margin-bottom:6px;text-transform:uppercase}
 .form-input{width:100%;background:#0f0c20;border:1px solid #2e2857;color:#e8e0d0;font-family:'Jost',sans-serif;font-size:15px;padding:12px 16px;border-radius:8px;outline:none;transition:border-color .2s;margin-bottom:16px}
 .form-input:focus{border-color:#c9a84c}
-.form-input::placeholder{color:#3a3458}
-.privacy-note{font-size:12px;color:#4a4468;text-align:center;margin-top:12px;line-height:1.6}
+.form-input::placeholder{color:#4a4468}
+.privacy-note{font-size:12px;color:#4a4468;text-align:center;margin-top:8px;line-height:1.6}
+/* Result */
+.result-header{text-align:center;margin-bottom:28px}
+.result-symbol{font-size:54px;margin-bottom:10px}
+.result-name{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,6vw,44px);font-weight:600;margin-bottom:8px}
+.result-headline{font-family:'Cormorant Garamond',serif;font-size:19px;font-style:italic;color:#8a82a0}
 .section-label{font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:.25em;text-transform:uppercase;margin-bottom:10px}
 .body-text{line-height:1.8;font-size:15px;color:#e8e0d0}
 .shadow-box{background:#0f0c20;border:1px solid #2e2857;border-radius:8px;padding:14px 18px;margin-bottom:14px;border-left:3px solid var(--arc-color)}
@@ -65,105 +71,57 @@ body{background:#0d0b1a;color:#e8e0d0;font-family:'Jost',sans-serif;min-height:1
 .sun-energy{color:#f5c842;font-family:'Cormorant Garamond',serif;font-size:17px}
 .cta-card{background:#14112b;border:1px solid #c47a8555;border-radius:12px;padding:26px 22px;text-align:center;margin-bottom:14px}
 .cta-title{font-family:'Cormorant Garamond',serif;font-size:clamp(19px,4vw,27px);font-weight:600;color:#f0d080;margin-bottom:10px}
-.cta-body{color:#8a82a0;font-size:15px;line-height:1.7;margin-bottom:16px}
-.session-box{background:#0f0c20;border:1px solid #c9a84c33;border-radius:8px;padding:16px 18px;margin-bottom:18px;text-align:left}
-.session-box-title{color:#c9a84c;font-size:12px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px}
-.session-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #1e1a38;font-size:14px;color:#c8c0d8}
-.session-row:last-child{border-bottom:none}
-.session-dot{color:#c47a85;font-size:10px}
-.feature-pills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+.cta-body{color:#8a82a0;font-size:15px;line-height:1.7;margin-bottom:20px}
+.feature-pills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
 .feature-pill{background:#1a1530;border:1px solid #2e2857;color:#8a82a0;font-size:12px;padding:5px 13px;border-radius:20px}
-.cta-btn{background:linear-gradient(135deg,#c47a85,#a04050);border:none;color:#fff;font-family:'Jost',sans-serif;font-size:16px;font-weight:500;letter-spacing:.06em;padding:17px 36px;border-radius:6px;cursor:pointer;transition:opacity .2s,transform .15s;width:100%;margin-bottom:8px;display:block;text-decoration:none;text-align:center}
+.cta-btn{background:linear-gradient(135deg,#c47a85,#a04050);border:none;color:#fff;font-family:'Jost',sans-serif;font-size:15px;font-weight:500;letter-spacing:.06em;padding:15px 36px;border-radius:6px;cursor:pointer;transition:opacity .2s,transform .15s;width:100%;margin-bottom:8px}
 .cta-btn:hover{opacity:.88;transform:scale(1.01)}
-.cta-note{color:#8a82a0;font-size:13px;line-height:1.6}
-.spots-badge{display:inline-block;background:#2e1a20;border:1px solid #c47a8566;color:#c47a85;font-size:12px;padding:4px 12px;border-radius:20px;margin-bottom:14px;letter-spacing:.05em}
-.price-box{background:#0f0c20;border:1px solid #2e2857;border-radius:10px;padding:6px;margin-bottom:16px;text-align:left}
-.price-box-title{color:#c9a84c;font-size:12px;letter-spacing:.15em;text-transform:uppercase;padding:10px 12px 6px}
-.price-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 12px;border-radius:8px}
-.price-row-discount{background:#1c1530;border:1px solid #c9a84c55}
-.price-row-left{flex:1}
-.price-label{font-size:14px;color:#e8e0d0;line-height:1.5;margin-bottom:3px}
-.save-tag{display:inline-block;background:#2e1a20;color:#c47a85;font-size:11px;padding:2px 8px;border-radius:10px;margin-left:6px;letter-spacing:.03em;vertical-align:middle}
-.price-desc{font-size:12.5px;color:#8a82a0;line-height:1.6}
-.price-amount{font-family:'Cormorant Garamond',serif;font-size:24px;color:#8a82a0;white-space:nowrap}
-.price-amount-discount{color:#f0d080;font-weight:600;font-size:28px}
-.cta-btn-secondary{background:linear-gradient(135deg,#c9a84c,#a07830);color:#0d0b1a;margin-top:0}
+.cta-note{color:#8a82a0;font-size:13px}
 .retake-row{text-align:center;margin-top:20px}
 .spinner{width:32px;height:32px;border:3px solid #2e2857;border-top-color:#c9a84c;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px}
+.success-icon{font-size:48px;text-align:center;margin-bottom:16px}
+/* Setup banner */
+.setup-banner{background:#1a0f0a;border:1px solid #c9a84c44;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:#8a82a0;line-height:1.6;display:none}
+.setup-banner.show{display:block}
+.setup-banner strong{color:#c9a84c}
 </style>
 </head>
 <body>
 <div id="stars"></div>
 <div id="app"></div>
+
 <script>
-// ══════════════════════════════════════════════════════════════
-//  CONFIG — fill in after setup. See instructions below.
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+// CONFIGURATION — fill these in after setup (see instructions below)
+// ═══════════════════════════════════════════════════
 const CONFIG = {
-  // ── Airtable (free at airtable.com) ──────────────────────
-  AIRTABLE_TOKEN:   'patXAMVlutjhZzaM1.53c45f7e50f9addba4d46720d983fd18c5ed4b208fedf4298b55ce0ecdfb013e',
+  // Your Airtable Personal Access Token (from airtable.com/account)
+  AIRTABLE_TOKEN: 'patNiTBzSPWGQ2bcz',
+  // Your Airtable Base ID (s)
   AIRTABLE_BASE_ID: 'apphZNwevbumW8bk0',
-  AIRTABLE_TABLE:   'Quiz Responses',
-
-  // ── $143 button: your Calendly or payment link ────────────
-  // Paste your Calendly event link OR PayPal.me/$143 link here
-  // Example: 'https://calendly.com/your-name/moon-to-sun'
-  PAYMENT_LINK: 'https://calendly.com/1021rota/moon-to-sun-pilot-program-reserve-your-spot',
-
-  // ── $97 button: your TikTok profile link ─────────────────
-  // Example: 'https://www.tiktok.com/@yourusername'
-  TIKTOK_LINK: 'https://www.tiktok.com/@1021rota',
-
-  // ── Your email ────────────────────────────────────────────
-  YOUR_EMAIL: '1021rota@gmail.com',
-
-  // ── EmailJS (free at emailjs.com — sends email to you AND the client) ──
-  // Setup instructions at the bottom of this file.
-  EMAILJS_PUBLIC_KEY:  'UzY23e44clij2M22R',
-  EMAILJS_SERVICE_ID:  'service_qcah0cd',
-  EMAILJS_TEMPLATE_ID: 'template_5np0yop',
+  // Your Airtable Table Name (exactly as you named it)
+  AIRTABLE_TABLE: 'Quiz Responses',
+  // Your program signup link (a Calendly, Typeform, or Google Form URL)
+  SIGNUP_LINK: 'https://paypal.me/1021rota/143',
 };
 
-// ══════════════════════════════════════════════════════════════
-//  EmailJS init
-// ══════════════════════════════════════════════════════════════
-// Always init EmailJS with whatever key is in CONFIG
-emailjs.init(CONFIG.EMAILJS_PUBLIC_KEY);
+const CONFIGURED = CONFIG.AIRTABLE_TOKEN !== 'patNiTBzSPWGQ2bcz';
 
-async function sendEmails(name, email, archetype, path, sunEnergy, beliefs){
-  if(!CONFIG.EMAILJS_PUBLIC_KEY || CONFIG.EMAILJS_PUBLIC_KEY === 'YOUR_EMAILJS_PUBLIC_KEY') return;
-  try {
-    await emailjs.send(CONFIG.EMAILJS_SERVICE_ID, CONFIG.EMAILJS_TEMPLATE_ID, {
-      to_name:       name,
-      to_email:      email,
-      archetype:     archetype,
-      path_forward:  path,
-      sun_energy:    sunEnergy,
-      beliefs:       beliefs,
-      session_dates: 'July 6 at 7:00pm EST · July 11 at 12:00pm EST · July 18 at 12:00pm EST · July 25 at 12:00pm EST',
-      coach_email:   CONFIG.YOUR_EMAIL,
-      reply_to:      CONFIG.YOUR_EMAIL,
-    });
-  } catch(e){
-    console.error('EmailJS error details:', JSON.stringify(e));
-    // Silent fail — Airtable still captures the data
-  }
-}
-
-// ══════════════════════════════════════════════════════════════
-//  Stars
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+// Stars
+// ═══════════════════════════════════════════════════
 const starsEl = document.getElementById('stars');
 for(let i=0;i<80;i++){
-  const s=document.createElement('div'); s.className='star';
+  const s=document.createElement('div');
+  s.className='star';
   const sz=Math.random()*2+0.5;
   s.style.cssText=`top:${Math.random()*100}%;left:${Math.random()*100}%;width:${sz}px;height:${sz}px;opacity:${Math.random()*.5+.2};animation-duration:${2+Math.random()*3}s;animation-delay:${Math.random()*2}s`;
   starsEl.appendChild(s);
 }
 
-// ══════════════════════════════════════════════════════════════
-//  Quiz Data
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+// Quiz Data
+// ═══════════════════════════════════════════════════
 const QUESTIONS=[
   {id:1,text:"When you face an important decision, what happens inside you?",options:[
     {text:"My mind spins in circles — I can't land anywhere",arcanas:["Moon","Hermit"]},
@@ -242,7 +200,7 @@ const ARCANA={
     imbalance:"You have wisdom, depth, and an inner knowing that others admire. But in imbalance, you use your quest for understanding as a reason to never land. More research, more preparation, more time alone to figure it out — this is the story you tell. The lantern you carry illuminates the next step, but you refuse to take it because you might need to illuminate one more.",
     limitingBeliefs:["\"I'm not ready yet.\"","\"I need to understand this fully before I share it.\"","\"Other people won't get it unless I can explain it perfectly.\"","\"Solitude is where I do my best work — connection is a distraction.\""],
     shadow:"Isolation disguised as discernment. Preparation as permanent postponement.",
-    movingForward:"Your path is toward The Sun — bringing your lantern out of the cave and letting others see it. You already know enough. The missing piece isn't more information; it's willingness to be seen before you're perfect. Reframing techniques and belief-bridging can help you step from 'not ready' into 'ready enough.'",
+    movingForward:"Your path is toward The Sun — bringing your lantern out of the cave and letting others see it. You already know enough. The missing piece isn't more information; it's a willingness to be seen before you're perfect. Reframing techniques and belief-bridging can help you step from 'not ready' into 'ready enough.'",
     sunEnergy:"Generous sharing. Visible leadership. Trusting that your wisdom is enough, right now."},
   Tower:{name:"The Tower",symbol:"⚡",headline:"The Disruptor Who Fears Her Own Power",color:"#e07060",
     imbalance:"You know, somewhere deep, that the structures around you aren't built on truth. You've either already watched things collapse — relationships, careers, self-images — or you live in quiet terror that they will. In imbalance, you either unconsciously blow things up before they can disappoint you, or you grip so tight to what's left that no air gets in.",
@@ -251,7 +209,7 @@ const ARCANA={
     movingForward:"Your path is toward The Sun — understanding that the lightning that struck cleared the ground for something true to be built. Collapse was not punishment; it was prerequisite. With NLP anchoring and parts work, you can learn to distinguish between destruction and necessary release.",
     sunEnergy:"Intentional rebuilding. Courage to create. Freedom from bracing for impact."},
   Devil:{name:"The Devil",symbol:"⛓️",headline:"The One Who Believes She Can't Leave",color:"#9060b0",
-    imbalance:"The chains in this card are loose — the figures could remove them. That's the cruelest part: you're not actually trapped, but you believe you are. The bondage is a story. It might be a relationship, a job, an identity, a habit, or a belief system that tells you this is just how it is for someone like you.",
+    imbalance:"The chains in this card are loose — the figures could remove them. That's the cruelest part of this archetype: you're not actually trapped, but you believe you are. The bondage is a story. It might be a relationship, a job, an identity, a habit, or a belief system that tells you this is just how it is for someone like you.",
     limitingBeliefs:["\"I don't have what it takes to have more than this.\"","\"I'd lose everything if I actually changed.\"","\"This is just who I am.\"","\"I've tried before and it didn't work.\""],
     shadow:"Learned helplessness. Using past evidence to make the future fixed.",
     movingForward:"Your path is toward The Sun — recognizing that the door was never locked from the outside. Timeline regression and belief reimprinting are particularly powerful here: finding the moment the story started and writing a new one. You are not your patterns. You are the one who can see them.",
@@ -275,7 +233,7 @@ const ARCANA={
     movingForward:"Your path is toward The Sun — learning that clarity about who you are makes you more magnetic, not less lovable. Parts integration and values-based identity work can help you choose yourself without feeling like a betrayal.",
     sunEnergy:"Wholeness. Authentic desire. Choosing yourself as the foundation of all love."},
   HighPriestess:{name:"The High Priestess",symbol:"🌙",headline:"The Keeper of Knowing Who Stays Silent",color:"#8080c0",
-    imbalance:"Your inner world is rich, layered, and profound. You sense things others miss. But in imbalance, you keep it all inside — guarding your gifts like a secret, waiting until you're certain, until it's safe. Wisdom hoarded is wisdom that cannot heal.",
+    imbalance:"Your inner world is rich, layered, and profound. You sense things others miss. But in imbalance, you keep it all inside — guarding your gifts like a secret, waiting until you're certain, until it's safe. You've made your inner life so private it's become a prison.",
     limitingBeliefs:["\"I need to be certain before I speak.\"","\"If I share too much, I'll be misunderstood.\"","\"My inner knowing isn't 'enough' — I need proof.\"","\"It's safer to observe than to participate.\""],
     shadow:"Wisdom as withholding. Depth as distance.",
     movingForward:"Your path is toward The Sun — bringing your inner knowing into the world. You were not given your gifts to hold them alone. Confidence anchoring and visibility reframes can bridge the gap between knowing and sharing.",
@@ -290,69 +248,74 @@ const ARCANA={
     imbalance:"You are driven, disciplined, and determined. But in imbalance, the momentum never stops because stopping feels like dying. You push harder when you're afraid. You achieve your way past your feelings and confuse rest with failure.",
     limitingBeliefs:["\"If I stop driving, everything will fall apart.\"","\"I can outwork my way through any obstacle.\"","\"Emotions are a distraction from goals.\"","\"I don't deserve to rest until I've earned it.\""],
     shadow:"Achievement as avoidance. Willpower substituted for wisdom.",
-    movingForward:"Your path is toward The Sun — learning to receive as well as achieve. The Sun doesn't chase, it attracts. Somatic anchoring and values realignment are your tools.",
+    movingForward:"Your path is toward The Sun — learning to receive as well as achieve. The Sun is radiant rather than driven; it doesn't chase, it attracts. Somatic anchoring and values realignment are your tools.",
     sunEnergy:"Purposeful flow. Ease in achievement. Leading from joy, not urgency."},
   Wheel:{name:"Wheel of Fortune",symbol:"🎡",headline:"The One Who Waits for the Wheel to Turn",color:"#b07040",
-    imbalance:"You've learned that life is cyclical and outcomes are unpredictable. But in imbalance, this becomes a reason to abdicate agency. You wait for luck to shift. You've outsourced your power to fate and called it wisdom. The wheel turns — but you're the one who decides which part of the wheel you stand on.",
-    limitingBeliefs:["\"I can't control what happens to me.\"","\"When it's my time, it will happen.\"","\"I've tried before and the timing was wrong.\"","\"Things always work out for other people, not me.\""],
+    imbalance:"You've learned that life is cyclical and outcomes are unpredictable. But in imbalance, this becomes a reason to abdicate agency. You wait for luck to shift. You've outsourced your power to fate and called it wisdom.",
+    limitingBeliefs:["\"I can't control what happens to me.\"","\"When it's my time, it will happen.\"","\"I've tried before and the timing was wrong.\"","\"Things always seem to work out for other people, not me.\""],
     shadow:"Fatalism dressed as faith. Passive waiting called trust.",
     movingForward:"Your path is toward The Sun — reclaiming that you are a force within the cycle. Locus-of-control reframes and evidence-gathering techniques can help you see where your choices — not fate — created outcomes.",
     sunEnergy:"Co-creation. Intentional momentum. Owning your power within life's cycles."},
   Judgement:{name:"Judgement",symbol:"🎺",headline:"The One Awaiting the Call She's Already Heard",color:"#a0c0a0",
-    imbalance:"You've had the awakening. You've felt the call. Something in you knows what you're here to do — and yet you haven't answered. You're waiting for more signs, a louder trumpet, absolute certainty. The horn has already sounded. You just haven't risen yet.",
+    imbalance:"You've had the awakening. You've felt the call. Something in you knows what you're here to do — and yet you haven't answered. You're waiting for more signs, absolute certainty, a louder trumpet. The horn has already sounded. You just haven't risen yet.",
     limitingBeliefs:["\"I need to be sure this is really my calling.\"","\"I have too much to atone for before I can fully step forward.\"","\"What if I answer and I'm wrong?\"","\"I'm not ready to be that visible yet.\""],
     shadow:"Calling deferred. Readiness used as a gatekeeper for destiny.",
     movingForward:"Your path is toward The Sun — understanding that the call doesn't get louder, only more insistent. Identity-level belief work and 'as if' reframing help you step into the version of yourself who has already answered.",
     sunEnergy:"Answered calling. Purposeful visibility. Rising fully into who you already are."},
 };
 
-// ══════════════════════════════════════════════════════════════
-//  Scoring
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+// Scoring
+// ═══════════════════════════════════════════════════
 function score(answers){
   const t={};
   answers.forEach(a=>{if(!a)return;a.arcanas.forEach(k=>{t[k]=(t[k]||0)+1;});});
   const top=Object.entries(t).sort((a,b)=>b[1]-a[1])[0]?.[0]||'Moon';
-  return ARCANA[top]||ARCANA.Moon;
+  return ARCANA[top]||ARCANA['Moon'];
 }
 
-// ══════════════════════════════════════════════════════════════
-//  Airtable
-// ══════════════════════════════════════════════════════════════
-async function saveToAirtable(name,email,archetype,path,sunEnergy,limitingBeliefs,summary){
-  if(!CONFIG.AIRTABLE_TOKEN || CONFIG.AIRTABLE_TOKEN==='YOUR_AIRTABLE_TOKEN_HERE') return;
-  try{
-    await fetch(`https://api.airtable.com/v0/${CONFIG.AIRTABLE_BASE_ID}/${encodeURIComponent(CONFIG.AIRTABLE_TABLE)}`,{
+// ═══════════════════════════════════════════════════
+// Airtable submission
+// ═══════════════════════════════════════════════════
+async function submitToAirtable(name, email, archetype, answerSummary){
+  if(!CONFIGURED) return true; // skip silently if not set up
+  try {
+    const res = await fetch(`https://api.airtable.com/v0/${CONFIG.AIRTABLE_BASE_ID}/${encodeURIComponent(CONFIG.AIRTABLE_TABLE)}`, {
       method:'POST',
       headers:{'Authorization':`Bearer ${CONFIG.AIRTABLE_TOKEN}`,'Content-Type':'application/json'},
-      body:JSON.stringify({fields:{
-        'Name':name,
-        'Email':email,
-        'Archetype':archetype,
-        'NLP Path Forward':path,
-        'Sun Energy Goal':sunEnergy,
-        'Limiting Beliefs':limitingBeliefs,
-        'Answer Summary':summary,
-        'Submitted At':new Date().toISOString()
+      body: JSON.stringify({fields:{
+        'Name': name,
+        'Email': email,
+        'Archetype': archetype,
+        'Answer Summary': answerSummary,
+        'Submitted At': new Date().toISOString(),
       }})
     });
-  }catch(e){
-    console.error('Airtable error:', JSON.stringify(e));
-  }
+    return res.ok;
+  } catch(e){ return false; }
 }
 
-// ══════════════════════════════════════════════════════════════
-//  State
-// ══════════════════════════════════════════════════════════════
-let S={screen:'intro',current:0,answers:[],selected:null,showBeliefs:false,name:'',email:'',result:null};
+// ═══════════════════════════════════════════════════
+// State
+// ═══════════════════════════════════════════════════
+let state={
+  screen:'intro',   // intro | quiz | contact | submitting | result
+  current:0,
+  answers:[],
+  selected:null,
+  showBeliefs:false,
+  contact:{name:'',email:''},
+  result:null,
+};
 
-// ══════════════════════════════════════════════════════════════
-//  Render
-// ══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+// Render
+// ═══════════════════════════════════════════════════
 function render(){
   const app=document.getElementById('app');
+  const s=state;
 
-  if(S.screen==='intro'){
+  if(s.screen==='intro'){
     app.innerHTML=`<div class="screen">
       <div class="intro-icon">✦</div>
       <p class="eyebrow">Sacred Archetype Reading</p>
@@ -360,9 +323,9 @@ function render(){
       <p class="intro-sub">Overthinking isn't a character flaw — it's an archetype in imbalance.</p>
       <p class="intro-body">This 8-question reading reveals the Major Arcana energy keeping you stuck, the limiting belief beneath it, and your path into Sun energy — where action, clarity, and confidence live.</p>
       <div class="pills">
-        <span class="pill"><span class="pill-dot">✦</span> 5 minutes</span>
-        <span class="pill"><span class="pill-dot">✦</span> No tarot knowledge needed</span>
-        <span class="pill"><span class="pill-dot">✦</span> Deeply personal</span>
+        <span class="pill"><span>✦</span> 5 minutes</span>
+        <span class="pill"><span>✦</span> No tarot knowledge needed</span>
+        <span class="pill"><span>✦</span> Deeply personal</span>
       </div>
       <div style="text-align:center">
         <button class="next-btn" style="font-size:16px;padding:16px 52px" onclick="startQuiz()">Begin Your Reading</button>
@@ -370,80 +333,80 @@ function render(){
       </div>
     </div>`;
 
-  } else if(S.screen==='quiz'){
-    const q=QUESTIONS[S.current];
-    const pct=Math.round((S.current/QUESTIONS.length)*100);
-    const L='ABCDEF';
-    const opts=q.options.map((o,i)=>`<button class="opt-btn${S.selected===i?' chosen':''}" onclick="selectOpt(${i})"><span class="opt-letter">${L[i]}.</span>${o.text}</button>`).join('');
+  } else if(s.screen==='quiz'){
+    const q=QUESTIONS[s.current];
+    const pct=Math.round((s.current/QUESTIONS.length)*100);
+    const letters='ABCDEF';
+    const opts=q.options.map((o,i)=>`
+      <button class="opt-btn${s.selected===i?' chosen':''}" onclick="selectOpt(${i})">
+        <span class="opt-letter">${letters[i]}.</span>${o.text}
+      </button>`).join('');
     app.innerHTML=`<div class="screen">
-      <div class="prog-row"><span class="prog-label">Question ${S.current+1} of ${QUESTIONS.length}</span><span class="prog-pct">${pct}% complete</span></div>
+      <div class="prog-row"><span class="prog-label">Question ${s.current+1} of ${QUESTIONS.length}</span><span class="prog-pct">${pct}% complete</span></div>
       <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
-      <div class="card"><p class="q-text">${q.text}</p><div class="options">${opts}</div></div>
+      <div class="card">
+        <p class="q-text">${q.text}</p>
+        <div class="options">${opts}</div>
+      </div>
       <div class="nav">
         <button class="ghost-btn" onclick="goBack()">← Back</button>
-        <button class="next-btn" onclick="goNext()" ${S.selected===null?'disabled':''}>
-          ${S.current===QUESTIONS.length-1?'Almost there →':'Next →'}
+        <button class="next-btn" onclick="goNext()" ${s.selected===null?'disabled':''}>
+          ${s.current===QUESTIONS.length-1?'Almost there →':'Next →'}
         </button>
       </div>
     </div>`;
 
-  } else if(S.screen==='contact'){
+  } else if(s.screen==='contact'){
     app.innerHTML=`<div class="screen">
       <div class="card">
-        <p class="eyebrow" style="text-align:left;margin-bottom:8px">One Last Step</p>
-        <p style="font-family:'Cormorant Garamond',serif;font-size:clamp(20px,4vw,27px);color:#f0d080;margin-bottom:8px;line-height:1.3">Where should we send your reading?</p>
-        <p style="color:#8a82a0;font-size:14px;line-height:1.6;margin-bottom:22px">Enter your name and email to reveal your archetype result. You'll also receive a personal note from Rose about working with your archetype's energy.</p>
-        <label class="form-label">First name</label>
-        <input class="form-input" id="inp-name" type="text" placeholder="e.g. Sarah" value="${S.name}" oninput="S.name=this.value"/>
-        <label class="form-label">Email address</label>
-        <input class="form-input" id="inp-email" type="email" placeholder="you@email.com" value="${S.email}" oninput="S.email=this.value"/>
-        <button class="next-btn" style="width:100%;padding:15px;font-size:15px" onclick="submitContact()">Reveal My Archetype ✦</button>
-        <p class="privacy-note">Your information is private and never shared or sold.<br>Unsubscribe from any follow-up at any time.</p>
+        <p class="eyebrow" style="text-align:left;margin-bottom:6px">One last step</p>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:clamp(20px,4vw,28px);color:#f0d080;margin-bottom:8px;line-height:1.3">Where should we send your archetype reading?</p>
+        <p style="color:#8a82a0;font-size:14px;line-height:1.6;margin-bottom:24px">Enter your name and email to reveal your result. You'll also receive guidance on working with your archetype's energy.</p>
+        <label class="form-label">Your first name</label>
+        <input class="form-input" id="inp-name" type="text" placeholder="e.g. Rose" value="${s.contact.name}" oninput="updateContact('name',this.value)"/>
+        <label class="form-label">Your email address</label>
+        <input class="form-input" id="inp-email" type="email" placeholder="you@email.com" value="${s.contact.email}" oninput="updateContact('email',this.value)"/>
+        <button class="next-btn" style="width:100%;font-size:15px;padding:15px" onclick="submitContact()">Reveal My Archetype ✦</button>
+        <p class="privacy-note">Your information is kept private and never shared or sold.<br>You can unsubscribe from any follow-up at any time.</p>
       </div>
-      <div style="text-align:center;margin-top:14px">
+      <div style="text-align:center;margin-top:16px">
         <button class="ghost-btn" onclick="skipContact()">Skip — just show me my result</button>
       </div>
     </div>`;
 
-  } else if(S.screen==='submitting'){
-    app.innerHTML=`<div class="screen" style="text-align:center;padding:80px 0">
+  } else if(s.screen==='submitting'){
+    app.innerHTML=`<div class="screen" style="text-align:center;padding:60px 0">
       <div class="spinner"></div>
-      <p style="color:#8a82a0;font-size:15px">Reading the cards...</p>
+      <p style="color:#8a82a0;font-size:15px">Reading your energy...</p>
     </div>`;
 
-  } else if(S.screen==='result'){
-    const r=S.result;
-    const beliefs=r.limitingBeliefs.map(b=>`<div class="belief-chip${S.showBeliefs?' show':''}">${b}</div>`).join('');
-    const payLink=CONFIG.PAYMENT_LINK!=='YOUR_PAYMENT_LINK_HERE'
-      ?`href="${CONFIG.PAYMENT_LINK}" target="_blank"`
-      :`href="mailto:${CONFIG.YOUR_EMAIL}?subject=Beta Program Signup&body=Hi Rose, I just completed the archetype quiz and I'm interested in the beta program. My archetype was: ${r.name}" target="_blank"`;
-
+  } else if(s.screen==='result'){
+    const r=s.result;
+    const beliefs=r.limitingBeliefs.map(b=>`<div class="belief-chip${s.showBeliefs?' show':''}">${b}</div>`).join('');
+    const signupHref = CONFIG.SIGNUP_LINK !== 'https://your-signup-link-here.com'
+      ? `href="${CONFIG.SIGNUP_LINK}" target="_blank"` : `onclick="alert('Add your signup link in the CONFIG section of the HTML file.')"`;
     app.innerHTML=`<div class="screen">
       <div class="result-header">
         <p class="eyebrow">Your Archetype Reading</p>
-        <div style="font-size:54px;margin-bottom:10px">${r.symbol}</div>
+        <div class="result-symbol">${r.symbol}</div>
         <h2 class="result-name" style="color:${r.color}">${r.name}</h2>
         <p class="result-headline">${r.headline}</p>
       </div>
-
       <div class="card" style="margin-bottom:14px">
         <p class="section-label" style="color:${r.color}">The Pattern You're In</p>
         <p class="body-text">${r.imbalance}</p>
       </div>
-
       <div class="shadow-box" style="--arc-color:${r.color}">
         <p class="shadow-label">Shadow</p>
         <p class="shadow-text">${r.shadow}</p>
       </div>
-
       <div style="margin-bottom:14px">
         <div class="beliefs-row">
           <p class="section-label" style="color:#c9a84c;margin-bottom:0">Limiting Beliefs at the Root</p>
-          <button class="toggle-btn" onclick="toggleBeliefs()">${S.showBeliefs?'Hide':'Reveal'}</button>
+          <button class="toggle-btn" onclick="toggleBeliefs()">${s.showBeliefs?'Hide':'Reveal'}</button>
         </div>
         ${beliefs}
       </div>
-
       <div class="sun-card">
         <p class="sun-label">Your Path → The Sun</p>
         <p class="body-text">${r.movingForward}</p>
@@ -452,50 +415,20 @@ function render(){
           <p class="sun-energy">${r.sunEnergy}</p>
         </div>
       </div>
-
       <div class="cta-card">
-        <div class="spots-badge">⬤ Only 10 spots available</div>
-        <p class="cta-title">Ready to move from ${r.name}<br>into your Sun?</p>
-        <p class="cta-body">The <strong style="color:#e8e0d0">Moon → Sun 4-Week Coaching Program</strong> uses NLP tools to rewire the exact beliefs your archetype revealed today — so you stop circling and start moving.</p>
-
-        <div class="session-box">
-          <p class="session-box-title">✦ July Pilot Cohort — Live Sessions (EST)</p>
-          <div class="session-row"><span class="session-dot">●</span> Monday, July 6 · 7:00 PM EST · Session 1: Archetype Deep Dive + Root Belief Work</div>
-          <div class="session-row"><span class="session-dot">●</span> Saturday, July 11 · 12:00 PM EST · Session 2: NLP Reimprinting + Parts Integration</div>
-          <div class="session-row"><span class="session-dot">●</span> Saturday, July 18 · 12:00 PM EST · Session 3: Identity Shift + Action Anchoring</div>
-          <div class="session-row"><span class="session-dot">●</span> Saturday, July 25 · 12:00 PM EST · Session 4: Sun Integration + Moving Forward</div>
-        </div>
-
+        <p class="cta-title">Ready to move from ${r.name} into your Sun?</p>
+        <p class="cta-body">In the <strong style="color:#e8e0d0">Moon → Sun 4-Week Coaching Program</strong>, we use NLP tools to rewire the exact beliefs your archetype revealed today — so you stop circling and start moving.</p>
         <div class="feature-pills">
           <span class="feature-pill">Belief reimprinting</span>
           <span class="feature-pill">Parts integration</span>
           <span class="feature-pill">Identity-level NLP</span>
-          <span class="feature-pill">Live group coaching</span>
+          <span class="feature-pill">Live coaching</span>
         </div>
-
-        <div class="price-box">
-          <p class="price-box-title">✦ Two Ways to Join</p>
-          <div class="price-row">
-            <div class="price-row-left">
-              <p class="price-label">Standard Pilot Price</p>
-              <p class="price-desc">Reserve your spot directly</p>
-            </div>
-            <p class="price-amount">$143</p>
-          </div>
-          <div class="price-row price-row-discount">
-            <div class="price-row-left">
-              <p class="price-label">Founding Member Price <span class="save-tag">Save $46</span></p>
-              <p class="price-desc">Comment on my latest post + DM me your archetype (<strong style="color:#f0d080">${r.name}</strong>) + agree to a short pre/post testimonial</p>
-            </div>
-            <p class="price-amount price-amount-discount">$97</p>
-          </div>
-        </div>
-
-        <a class="cta-btn" ${payLink}>✦ Reserve My Spot — $143</a>
-        <a class="cta-btn cta-btn-secondary" href="${CONFIG.TIKTOK_LINK}" target="_blank">✦ Get Founding Member Price — $97</a>
-        <p class="cta-note">Payment secures your seat · Small group of 10 · Starts July 6 · Registration closes July 5 at 7pm EST<br>Questions? Email <a href="mailto:${CONFIG.YOUR_EMAIL}" style="color:#c47a85">${CONFIG.YOUR_EMAIL}</a></p>
+        <a ${signupHref} style="text-decoration:none;display:block">
+          <button class="cta-btn">✦ Apply for the Beta Program — $97</button>
+        </a>
+        <p class="cta-note">Small group · 4 weeks · Beta pricing</p>
       </div>
-
       <div class="retake-row">
         <button class="ghost-btn" onclick="startQuiz()">↩ Retake the Quiz</button>
       </div>
@@ -503,180 +436,51 @@ function render(){
   }
 }
 
-// ══════════════════════════════════════════════════════════════
-//  Actions
-// ══════════════════════════════════════════════════════════════
-function startQuiz(){S={screen:'quiz',current:0,answers:Array(QUESTIONS.length).fill(null),selected:null,showBeliefs:false,name:'',email:'',result:null};render();}
-function selectOpt(i){S.selected=i;render();}
-function goNext(){
-  if(S.selected===null)return;
-  S.answers[S.current]=QUESTIONS[S.current].options[S.selected];
-  if(S.current<QUESTIONS.length-1){S.current++;S.selected=null;render();}
-  else{S.screen='contact';render();}
-}
-function goBack(){
-  if(S.current===0){S.screen='intro';render();return;}
-  S.current--;
-  const prev=S.answers[S.current];
-  S.selected=prev?QUESTIONS[S.current].options.indexOf(prev):null;
+// ═══════════════════════════════════════════════════
+// Actions
+// ═══════════════════════════════════════════════════
+function startQuiz(){
+  state={screen:'quiz',current:0,answers:Array(QUESTIONS.length).fill(null),selected:null,showBeliefs:false,contact:{name:'',email:''},result:null};
   render();
 }
+function selectOpt(i){state.selected=i;render();}
+function goNext(){
+  if(state.selected===null)return;
+  state.answers[state.current]=QUESTIONS[state.current].options[state.selected];
+  if(state.current<QUESTIONS.length-1){state.current++;state.selected=null;render();}
+  else{state.screen='contact';render();}
+}
+function goBack(){
+  if(state.current===0){state.screen='intro';render();return;}
+  state.current--;
+  const prev=state.answers[state.current];
+  state.selected=prev?QUESTIONS[state.current].options.indexOf(prev):null;
+  render();
+}
+function updateContact(field,val){state.contact[field]=val;}
 async function submitContact(){
-  const name=document.getElementById('inp-name').value.trim();
-  const email=document.getElementById('inp-email').value.trim();
+  const name=document.getElementById('inp-name')?.value.trim()||state.contact.name;
+  const email=document.getElementById('inp-email')?.value.trim()||state.contact.email;
   if(!email){alert('Please enter your email to continue.');return;}
-  S.name=name; S.email=email;
-  S.screen='submitting'; render();
-  S.result=score(S.answers);
-  const summary=S.answers.map((a,i)=>a?`Q${i+1}: ${a.text}`:'').filter(Boolean).join(' | ');
-  const path=S.result.movingForward;
-  const sunEnergy=S.result.sunEnergy;
-  const limitingBeliefs=S.result.limitingBeliefs.join(' | ');
-  await Promise.all([
-    saveToAirtable(name,email,S.result.name,path,sunEnergy,limitingBeliefs,summary),
-    sendEmails(name,email,S.result.name,path,sunEnergy,limitingBeliefs),
-  ]);
-  setTimeout(()=>{S.screen='result';render();},900);
+  state.contact={name,email};
+  state.screen='submitting';
+  render();
+  const r=score(state.answers);
+  state.result=r;
+  // Build answer summary for Airtable
+  const summary=state.answers.map((a,i)=>a?`Q${i+1}: ${a.text}`:'').filter(Boolean).join(' | ');
+  await submitToAirtable(name,email,r.name,summary);
+  setTimeout(()=>{state.screen='result';render();},800);
 }
 async function skipContact(){
-  S.screen='submitting'; render();
-  S.result=score(S.answers);
-  setTimeout(()=>{S.screen='result';render();},600);
+  state.screen='submitting';
+  render();
+  state.result=score(state.answers);
+  setTimeout(()=>{state.screen='result';render();},600);
 }
-function toggleBeliefs(){S.showBeliefs=!S.showBeliefs;render();}
+function toggleBeliefs(){state.showBeliefs=!state.showBeliefs;render();}
 
 render();
-
-/*
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  SETUP INSTRUCTIONS — read this after downloading
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-TO GO LIVE ON GITHUB PAGES (free, permanent):
-1. Go to github.com and log in
-2. Click the green "New" button to create a new repository
-3. Name it exactly:  your-username.github.io
-   (replace "your-username" with your actual GitHub username)
-4. Check "Add a README file" then click Create Repository
-5. Click "Add file" → "Upload files"
-6. Drag THIS FILE (index.html) into the upload area
-7. Click "Commit changes"
-8. Go to Settings → Pages → Source → select "main" branch → Save
-9. Your quiz is live at: https://your-username.github.io
-   (takes about 2 minutes to go live the first time)
-
-TO COLLECT EMAILS IN AIRTABLE (free):
-1. Go to airtable.com → sign up free → create a Base called "Moon to Sun"
-2. Rename the first table to: Quiz Responses
-3. Add these columns (exact names matter):
-   Name / Email / Archetype / NLP Path Forward / Sun Energy Goal / Limiting Beliefs / Answer Summary / Submitted At
-4. Go to airtable.com/create/tokens → click "Create token"
-   - Name it "Quiz Token"
-   - Scope: data.records:write
-   - Access: your "Moon to Sun" base
-   - Copy the token (starts with "pat") — you only see it once
-5. Go to airtable.com/developers/web/api/introduction
-   - Select your base → look for "INTRODUCTION" section
-   - Copy the Base ID (starts with "app")
-6. Open this HTML file in Notepad/TextEdit
-   - Replace YOUR_AIRTABLE_TOKEN_HERE with your token
-   - Replace YOUR_BASE_ID_HERE with your base ID
-   - Save and re-upload to GitHub
-
-TO ADD A PAYMENT LINK:
-  Easiest free option: PayPal.me
-  1. Go to paypal.com/paypalme → set up your PayPal.me link
-  2. Your link will look like: paypal.me/YourName/97
-  3. Replace YOUR_PAYMENT_LINK_HERE with that link
-  
-  Alternative: Venmo, Cash App, or a free Google Form
-
-TO POINT THE "FOUNDING MEMBER" BUTTON TO YOUR TIKTOK:
-  Find this line near the top of the file:
-    TIKTOK_LINK: 'https://www.tiktok.com/@1021rota',
-  Replace YOUR_TIKTOK_USERNAME with your actual TikTok handle.
-  Example: if your TikTok is @1021rota, change it to:
-    TIKTOK_LINK: 'https://www.tiktok.com/@1021rota',
-
-TO POINT THE "$143" BUTTON TO YOUR CALENDLY:
-  Find this line near the top of the file:
-    PAYMENT_LINK: 'https://calendly.com/1021rota/moon-to-sun-pilot-program-reserve-your-spot',
-  Replace with your Calendly event link. Example:
-    PAYMENT_LINK: 'https://calendly.com/1021rota/moon-to-sun-pilot',
-
-  HOW THE DISCOUNT WORKS (manual process, no extra tools needed):
-  1. Person sees their archetype name on the result screen
-  2. They click "Get Founding Member Price" → lands on your TikTok
-  3. They comment on your post + send you a DM with their archetype name
-  4. You manually verify the DM, then send them a private $97 payment
-     link (a 1/3-off PayPal.me link, e.g. paypal.me/RoseCoaching/97)
-  5. Track who agreed to pre/post testimonials in your Airtable so you
-     can follow up for the testimonial after week 4
-
-TO UPDATE YOUR EMAIL:
-  Your email 1021rota@gmail.com is already filled in.
-
-TO SET UP EMAIL NOTIFICATIONS (EmailJS — free, no server needed):
-  This sends TWO emails when someone completes the quiz:
-    1. A results email to the CLIENT with their archetype + path forward
-    2. A notification email to YOU at 1021rota@gmail.com with their details
-
-  Step 1 — Create your free EmailJS account
-    Go to emailjs.com → Sign Up Free
-    (Free plan: 200 emails/month — plenty for your pilot)
-
-  Step 2 — Add your Gmail as an email service
-    Dashboard → Email Services → Add New Service → Gmail
-    Connect your 1021rota@gmail.com account
-    Copy the Service ID (looks like: service_xxxxxxx)
-    Paste it here in the config: EMAILJS_SERVICE_ID: 'service_xxxxxxx'
-
-  Step 3 — Create an email template
-    Dashboard → Email Templates → Create New Template
-    Set "To Email" field to: {{to_email}}
-    Set "Reply To" field to: {{coach_email}}
-    Paste this as the Subject line:
-      Your {{archetype}} Reading — Moon to Sun Pilot Program
-    Paste this as the Body:
-
-    Hi {{to_name}},
-
-    Thank you for completing the Major Arcana quiz!
-
-    Your archetype is: {{archetype}}
-
-    YOUR PATH FORWARD:
-    {{path_forward}}
-
-    YOUR SUN ENERGY:
-    {{sun_energy}}
-
-    YOUR SESSION DATES (all EST):
-    {{session_dates}}
-
-    To reserve your spot, visit the link in the quiz or email me directly:
-    {{coach_email}}
-
-    With love and light,
-    Rose
-    1021rota@gmail.com
-
-    ---
-    Then add a SECOND template (or use BCC) to notify yourself.
-    Easiest: in the same template, set BCC to: 1021rota@gmail.com
-    This way you receive a copy of every result email automatically.
-
-    Copy the Template ID (looks like: template_xxxxxxx)
-    Paste it here: EMAILJS_TEMPLATE_ID: 'template_xxxxxxx'
-
-  Step 4 — Get your Public Key
-    Dashboard → Account → General → Public Key
-    Copy it and paste here: EMAILJS_PUBLIC_KEY: 'xxxxxxxxxxxxxxx'
-
-  Step 5 — Fill all three values into the CONFIG section of this file,
-    save, and re-upload to GitHub. Test by completing the quiz yourself.
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-*/
 </script>
 </body>
 </html>
