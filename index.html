@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -147,7 +146,7 @@ async function sendEmails(name, email, archetype, path, sunEnergy, beliefs){
     });
   } catch(e){
     console.error('EmailJS error details:', JSON.stringify(e));
-    alert('Note: result email could not be sent, but your data was saved. Email 1021rota@gmail.com if you need your results.');
+    // Silent fail — Airtable still captures the data
   }
 }
 
@@ -321,7 +320,7 @@ function score(answers){
 //  Airtable
 // ══════════════════════════════════════════════════════════════
 async function saveToAirtable(name,email,archetype,path,sunEnergy,limitingBeliefs,summary){
-  if(CONFIG.AIRTABLE_TOKEN==='patTthWz9JJF9QNQ1.d5a7f9af58876e0d7bced602abd06b45d4b92af6b47aa2ef5a8daf214375ed9a') return;
+  if(!CONFIG.AIRTABLE_TOKEN || CONFIG.AIRTABLE_TOKEN==='YOUR_AIRTABLE_TOKEN_HERE') return;
   try{
     await fetch(`https://api.airtable.com/v0/${CONFIG.AIRTABLE_BASE_ID}/${encodeURIComponent(CONFIG.AIRTABLE_TABLE)}`,{
       method:'POST',
@@ -337,7 +336,9 @@ async function saveToAirtable(name,email,archetype,path,sunEnergy,limitingBelief
         'Submitted At':new Date().toISOString()
       }})
     });
-  }catch(e){}
+  }catch(e){
+    console.error('Airtable error:', JSON.stringify(e));
+  }
 }
 
 // ══════════════════════════════════════════════════════════════
