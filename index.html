@@ -95,19 +95,17 @@ body{background:#0d0b1a;color:#e8e0d0;font-family:'Jost',sans-serif;min-height:1
 <div id="stars"></div>
 <div id="app"></div>
 <script>
-const CONFIG = {
-  AIRTABLE_TOKEN:      'patNiTBzSPWGQ2bcz',
-  AIRTABLE_BASE_ID:    'apphZNwevbumW8bk0',
-  AIRTABLE_TABLE:      'Quiz Responses',
-  PAYPAL_143:          'https://paypal.me/1021rota/143',
-  TIKTOK_LINK:         'https://www.tiktok.com/@1021rota',
-  YOUR_EMAIL:          '1021rota@gmail.com',
-  EMAILJS_PUBLIC_KEY:  'UzY23e44clij2M22R',
-  EMAILJS_SERVICE_ID:  'service_qcah0cd',
-  EMAILJS_TEMPLATE_ID: 'template_5np0yop',
-};
-emailjs.init(CONFIG.EMAILJS_PUBLIC_KEY);
+// ── EmailJS credentials only — no Airtable token in this file ──
+const EJS_KEY  = 'UzY23e44clij2M22R';
+const EJS_SVC  = 'service_qcah0cd';
+const EJS_TPL  = 'template_5np0yop';
+const PAYPAL   = 'https://paypal.me/1021rota/143';
+const TIKTOK   = 'https://www.tiktok.com/@1021rota';
+const MY_EMAIL = '1021rota@gmail.com';
 
+emailjs.init(EJS_KEY);
+
+// ── Stars ──
 const starsEl=document.getElementById('stars');
 for(let i=0;i<80;i++){const s=document.createElement('div');s.className='star';const sz=Math.random()*2+0.5;s.style.cssText=`top:${Math.random()*100}%;left:${Math.random()*100}%;width:${sz}px;height:${sz}px;opacity:${Math.random()*.5+.2};animation-duration:${2+Math.random()*3}s;animation-delay:${Math.random()*2}s`;starsEl.appendChild(s);}
 
@@ -253,38 +251,87 @@ const ARCANA={
     sunEnergy:"Answered calling. Purposeful visibility. Rising fully into who you already are."},
 };
 
+// ── Scoring ──
 function score(answers){const t={};answers.forEach(a=>{if(!a)return;a.arcanas.forEach(k=>{t[k]=(t[k]||0)+1;});});const top=Object.entries(t).sort((a,b)=>b[1]-a[1])[0]?.[0]||'Moon';return ARCANA[top]||ARCANA.Moon;}
 
-async function saveToAirtable(name,email,archetype,path,sunEnergy,beliefs,summary){
+// ── EmailJS: sends full result to client AND BCC to Rose ──
+async function sendResult(name,email,archetype,path,sunEnergy,beliefs,summary){
   try{
-    const res=await fetch(`https://api.airtable.com/v0/${CONFIG.AIRTABLE_BASE_ID}/${encodeURIComponent(CONFIG.AIRTABLE_TABLE)}`,{method:'POST',headers:{'Authorization':`Bearer ${CONFIG.AIRTABLE_TOKEN}`,'Content-Type':'application/json'},body:JSON.stringify({fields:{'Name':name,'Email':email,'Archetype':archetype,'NLP Path Forward':path,'Sun Energy Goal':sunEnergy,'Limiting Beliefs':beliefs,'Answer Summary':summary,'Submitted At':new Date().toISOString()}})});
-    const json=await res.json();
-    if(!res.ok)console.error('Airtable error:',JSON.stringify(json));
-    else console.log('Airtable OK - row id:',json.id);
-  }catch(e){console.error('Airtable network error:',e.message);}
+    const r=await emailjs.send(EJS_SVC, EJS_TPL,{
+      to_name:       name||'Friend',
+      to_email:      email,
+      archetype:     archetype,
+      path_forward:  path,
+      sun_energy:    sunEnergy,
+      beliefs:       beliefs,
+      answer_summary: summary,
+      session_dates: 'July 6 at 7:00pm / July 11 at 12:00pm / July 18 at 12:00pm / July 25 at 12:00pm (all EST)',
+      coach_email:   MY_EMAIL,
+      reply_to:      MY_EMAIL,
+    });
+    console.log('Email sent - status:',r.status,r.text);
+  }catch(e){
+    console.error('EmailJS failed:',JSON.stringify(e));
+  }
 }
 
-async function sendEmails(name,email,archetype,path,sunEnergy,beliefs){
-  try{
-    const r=await emailjs.send(CONFIG.EMAILJS_SERVICE_ID,CONFIG.EMAILJS_TEMPLATE_ID,{to_name:name||'Friend',to_email:email,archetype:archetype,path_forward:path,sun_energy:sunEnergy,beliefs:beliefs,session_dates:'July 6 at 7:00pm · July 11 at 12:00pm · July 18 at 12:00pm · July 25 at 12:00pm (all EST)',coach_email:CONFIG.YOUR_EMAIL,reply_to:CONFIG.YOUR_EMAIL});
-    console.log('Email sent OK - status:',r.status);
-  }catch(e){console.error('EmailJS error:',JSON.stringify(e));}
-}
-
+// ── State ──
 let S={screen:'intro',current:0,answers:[],selected:null,showBeliefs:false,name:'',email:'',result:null};
 
+// ── Render ──
 function render(){
   const app=document.getElementById('app');
   if(S.screen==='intro'){
-    app.innerHTML=`<div class="screen"><div class="intro-icon">✦</div><p class="eyebrow">Sacred Archetype Reading</p><h1 class="intro-title">Which Major Arcana<br>Is Running Your Life?</h1><p class="intro-sub">Overthinking isn't a character flaw — it's an archetype in imbalance.</p><p class="intro-body">This 8-question reading reveals the Major Arcana energy keeping you stuck, the limiting belief beneath it, and your path into Sun energy — where action, clarity, and confidence live.</p><div class="pills"><span class="pill"><span class="pill-dot">✦</span> 5 minutes</span><span class="pill"><span class="pill-dot">✦</span> No tarot knowledge needed</span><span class="pill"><span class="pill-dot">✦</span> Deeply personal</span></div><div style="text-align:center"><button class="next-btn" style="font-size:16px;padding:16px 52px" onclick="startQuiz()">Begin Your Reading</button><p style="margin-top:16px;color:#8a82a0;font-size:13px">Answer honestly — choose what feels most true, not most spiritual.</p></div></div>`;
+    app.innerHTML=`<div class="screen">
+      <div class="intro-icon">&#10022;</div>
+      <p class="eyebrow">Sacred Archetype Reading</p>
+      <h1 class="intro-title">Which Major Arcana<br>Is Running Your Life?</h1>
+      <p class="intro-sub">Overthinking isn't a character flaw &#8212; it's an archetype in imbalance.</p>
+      <p class="intro-body">This 8-question reading reveals the Major Arcana energy keeping you stuck, the limiting belief beneath it, and your path into Sun energy &#8212; where action, clarity, and confidence live.</p>
+      <div class="pills">
+        <span class="pill"><span class="pill-dot">&#10022;</span> 5 minutes</span>
+        <span class="pill"><span class="pill-dot">&#10022;</span> No tarot knowledge needed</span>
+        <span class="pill"><span class="pill-dot">&#10022;</span> Deeply personal</span>
+      </div>
+      <div style="text-align:center">
+        <button class="next-btn" style="font-size:16px;padding:16px 52px" onclick="startQuiz()">Begin Your Reading</button>
+        <p style="margin-top:16px;color:#8a82a0;font-size:13px">Answer honestly &#8212; choose what feels most true, not most spiritual.</p>
+      </div>
+    </div>`;
   } else if(S.screen==='quiz'){
     const q=QUESTIONS[S.current];const pct=Math.round((S.current/QUESTIONS.length)*100);const L='ABCDEF';
     const opts=q.options.map((o,i)=>`<button class="opt-btn${S.selected===i?' chosen':''}" onclick="selectOpt(${i})"><span class="opt-letter">${L[i]}.</span>${o.text}</button>`).join('');
-    app.innerHTML=`<div class="screen"><div class="prog-row"><span class="prog-label">Question ${S.current+1} of ${QUESTIONS.length}</span><span class="prog-pct">${pct}% complete</span></div><div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div><div class="card"><p class="q-text">${q.text}</p><div class="options">${opts}</div></div><div class="nav"><button class="ghost-btn" onclick="goBack()">← Back</button><button class="next-btn" onclick="goNext()" ${S.selected===null?'disabled':''}>${S.current===QUESTIONS.length-1?'Almost there →':'Next →'}</button></div></div>`;
+    app.innerHTML=`<div class="screen">
+      <div class="prog-row"><span class="prog-label">Question ${S.current+1} of ${QUESTIONS.length}</span><span class="prog-pct">${pct}% complete</span></div>
+      <div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div>
+      <div class="card"><p class="q-text">${q.text}</p><div class="options">${opts}</div></div>
+      <div class="nav">
+        <button class="ghost-btn" onclick="goBack()">&#8592; Back</button>
+        <button class="next-btn" onclick="goNext()" ${S.selected===null?'disabled':''}>${S.current===QUESTIONS.length-1?'Almost there &#8594;':'Next &#8594;'}</button>
+      </div>
+    </div>`;
   } else if(S.screen==='contact'){
-    app.innerHTML=`<div class="screen"><div class="card"><p class="eyebrow" style="text-align:left;margin-bottom:8px">One Last Step</p><p style="font-family:'Cormorant Garamond',serif;font-size:clamp(20px,4vw,27px);color:#f0d080;margin-bottom:8px;line-height:1.3">Where should we send your reading?</p><p style="color:#8a82a0;font-size:14px;line-height:1.6;margin-bottom:22px">Enter your name and email to reveal your archetype result. You'll also receive a personal note from Rose with your full path forward.</p><label class="form-label">First name</label><input class="form-input" id="inp-name" type="text" placeholder="e.g. Sarah" value="${S.name}" oninput="S.name=this.value"/><label class="form-label">Email address</label><input class="form-input" id="inp-email" type="email" placeholder="you@email.com" value="${S.email}" oninput="S.email=this.value"/><button class="next-btn" style="width:100%;padding:15px;font-size:15px" onclick="submitContact()">Reveal My Archetype ✦</button><p class="privacy-note">Your information is private and never shared or sold.</p></div><div style="text-align:center;margin-top:14px"><button class="ghost-btn" onclick="skipContact()">Skip — just show me my result</button></div></div>`;
+    app.innerHTML=`<div class="screen">
+      <div class="card">
+        <p class="eyebrow" style="text-align:left;margin-bottom:8px">One Last Step</p>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:clamp(20px,4vw,27px);color:#f0d080;margin-bottom:8px;line-height:1.3">Where should we send your reading?</p>
+        <p style="color:#8a82a0;font-size:14px;line-height:1.6;margin-bottom:22px">Enter your name and email to reveal your result. Rose will also email you your full archetype reading and path forward.</p>
+        <label class="form-label">First name</label>
+        <input class="form-input" id="inp-name" type="text" placeholder="e.g. Sarah" value="${S.name}" oninput="S.name=this.value"/>
+        <label class="form-label">Email address</label>
+        <input class="form-input" id="inp-email" type="email" placeholder="you@email.com" value="${S.email}" oninput="S.email=this.value"/>
+        <button class="next-btn" style="width:100%;padding:15px;font-size:15px" onclick="submitContact()">Reveal My Archetype &#10022;</button>
+        <p class="privacy-note">Your information is private and never shared or sold.</p>
+      </div>
+      <div style="text-align:center;margin-top:14px">
+        <button class="ghost-btn" onclick="skipContact()">Skip &#8212; just show me my result</button>
+      </div>
+    </div>`;
   } else if(S.screen==='submitting'){
-    app.innerHTML=`<div class="screen" style="text-align:center;padding:80px 0"><div class="spinner"></div><p style="color:#8a82a0;font-size:15px">Reading the cards...</p></div>`;
+    app.innerHTML=`<div class="screen" style="text-align:center;padding:80px 0">
+      <div class="spinner"></div>
+      <p style="color:#8a82a0;font-size:15px">Reading the cards...</p>
+    </div>`;
   } else if(S.screen==='result'){
     const r=S.result;
     const beliefs=r.limitingBeliefs.map(b=>`<div class="belief-chip${S.showBeliefs?' show':''}">${b}</div>`).join('');
@@ -311,23 +358,23 @@ function render(){
         ${beliefs}
       </div>
       <div class="sun-card">
-        <p class="sun-label">Your Path \u2192 The Sun</p>
+        <p class="sun-label">Your Path &#8594; The Sun</p>
         <p class="body-text">${r.movingForward}</p>
         <div class="sun-inner">
-          <p class="sun-inner-label">\u2600\ufe0e Sun Energy You're Moving Into</p>
+          <p class="sun-inner-label">&#9728; Sun Energy You're Moving Into</p>
           <p class="sun-energy">${r.sunEnergy}</p>
         </div>
       </div>
       <div class="cta-card">
-        <div class="spots-badge">\u25cf Only 10 spots available</div>
+        <div class="spots-badge">&#9679; Only 10 spots available</div>
         <p class="cta-title">Ready to move from ${r.name} into your Sun?</p>
-        <p class="cta-body">The <strong style="color:#e8e0d0">Moon \u2192 Sun 4-Week Pilot Program</strong> uses NLP tools to rewire the exact beliefs your archetype revealed today.</p>
+        <p class="cta-body">The <strong style="color:#e8e0d0">Moon &#8594; Sun 4-Week Pilot Program</strong> uses NLP tools to rewire the exact beliefs your archetype revealed today.</p>
         <div class="session-box">
-          <p class="session-box-title">\u2726 July Pilot Cohort \u2014 Live Sessions (EST)</p>
-          <div class="session-row"><span class="session-dot">\u25cf</span>Monday July 6 \u00b7 7:00 PM \u2014 Session 1: Archetype Deep Dive + Root Belief Work</div>
-          <div class="session-row"><span class="session-dot">\u25cf</span>Saturday July 11 \u00b7 12:00 PM \u2014 Session 2: NLP Reimprinting + Parts Integration</div>
-          <div class="session-row"><span class="session-dot">\u25cf</span>Saturday July 18 \u00b7 12:00 PM \u2014 Session 3: Identity Shift + Action Anchoring</div>
-          <div class="session-row"><span class="session-dot">\u25cf</span>Saturday July 25 \u00b7 12:00 PM \u2014 Session 4: Sun Integration + Moving Forward</div>
+          <p class="session-box-title">&#10022; July Pilot Cohort &#8212; Live Sessions (EST)</p>
+          <div class="session-row"><span class="session-dot">&#9679;</span>Monday July 6 &middot; 7:00 PM &#8212; Session 1: Archetype Deep Dive + Root Belief Work</div>
+          <div class="session-row"><span class="session-dot">&#9679;</span>Saturday July 11 &middot; 12:00 PM &#8212; Session 2: NLP Reimprinting + Parts Integration</div>
+          <div class="session-row"><span class="session-dot">&#9679;</span>Saturday July 18 &middot; 12:00 PM &#8212; Session 3: Identity Shift + Action Anchoring</div>
+          <div class="session-row"><span class="session-dot">&#9679;</span>Saturday July 25 &middot; 12:00 PM &#8212; Session 4: Sun Integration + Moving Forward</div>
         </div>
         <div class="feature-pills">
           <span class="feature-pill">Belief reimprinting</span>
@@ -336,7 +383,7 @@ function render(){
           <span class="feature-pill">Live group coaching</span>
         </div>
         <div class="price-box">
-          <p class="price-box-title">\u2726 Two Ways to Join</p>
+          <p class="price-box-title">&#10022; Two Ways to Join</p>
           <div class="price-row">
             <div class="price-row-left">
               <p class="price-label">Standard Pilot Price</p>
@@ -352,38 +399,42 @@ function render(){
             <p class="price-amount price-amount-discount">$97</p>
           </div>
         </div>
-        <a href="${CONFIG.PAYPAL_143}" target="_blank" class="cta-btn">\u2726 Reserve My Spot \u2014 Pay $143 Now</a>
-        <a href="${CONFIG.TIKTOK_LINK}" target="_blank" class="cta-btn cta-btn-gold">\u2726 Get Founding Member Price \u2014 $97</a>
-        <p class="cta-note">After paying, email <a href="mailto:${CONFIG.YOUR_EMAIL}" style="color:#c47a85">${CONFIG.YOUR_EMAIL}</a> with your name to confirm your spot.<br>Registration closes July 5 at 7pm EST</p>
+        <a href="${PAYPAL}" target="_blank" class="cta-btn">&#10022; Reserve My Spot &#8212; Pay $143 Now</a>
+        <a href="${TIKTOK}" target="_blank" class="cta-btn cta-btn-gold">&#10022; Get Founding Member Price &#8212; $97</a>
+        <p class="cta-note">After paying, email <a href="mailto:${MY_EMAIL}" style="color:#c47a85">${MY_EMAIL}</a> with your name to confirm your spot.<br>Registration closes July 5 at 7pm EST</p>
       </div>
-      <div class="retake-row"><button class="ghost-btn" onclick="startQuiz()">\u21a9 Retake the Quiz</button></div>
+      <div class="retake-row"><button class="ghost-btn" onclick="startQuiz()">&#8617; Retake the Quiz</button></div>
     </div>`;
   }
 }
 
+// ── Actions ──
 function startQuiz(){S={screen:'quiz',current:0,answers:Array(QUESTIONS.length).fill(null),selected:null,showBeliefs:false,name:'',email:'',result:null};render();}
 function selectOpt(i){S.selected=i;render();}
 function goNext(){if(S.selected===null)return;S.answers[S.current]=QUESTIONS[S.current].options[S.selected];if(S.current<QUESTIONS.length-1){S.current++;S.selected=null;render();}else{S.screen='contact';render();}}
 function goBack(){if(S.current===0){S.screen='intro';render();return;}S.current--;const prev=S.answers[S.current];S.selected=prev?QUESTIONS[S.current].options.indexOf(prev):null;render();}
+
 async function submitContact(){
   const name=document.getElementById('inp-name').value.trim();
   const email=document.getElementById('inp-email').value.trim();
   if(!email){alert('Please enter your email to continue.');return;}
-  S.name=name;S.email=email;S.screen='submitting';render();
+  S.name=name; S.email=email;
+  S.screen='submitting'; render();
   S.result=score(S.answers);
-  const summary=S.answers.map((a,i)=>a?`Q${i+1}: ${a.text}`:'').filter(Boolean).join(' | ');
-  const path=S.result.movingForward;
-  const sunEnergy=S.result.sunEnergy;
-  const beliefs=S.result.limitingBeliefs.join(' | ');
-  await Promise.allSettled([
-    saveToAirtable(name,email,S.result.name,path,sunEnergy,beliefs,summary),
-    sendEmails(name,email,S.result.name,path,sunEnergy,beliefs),
-  ]);
-  S.screen='result';render();
+  const r=S.result;
+  const summary=S.answers.map((a,i)=>a?'Q'+(i+1)+': '+a.text:'').filter(Boolean).join(' | ');
+  // Send email — this is our primary data capture
+  await sendResult(name,email,r.name,r.movingForward,r.sunEnergy,r.limitingBeliefs.join(' | '),summary);
+  S.screen='result'; render();
 }
-async function skipContact(){S.screen='submitting';render();S.result=score(S.answers);S.screen='result';render();}
-function toggleBeliefs(){S.showBeliefs=!S.showBeliefs;render();}
 
+async function skipContact(){
+  S.screen='submitting'; render();
+  S.result=score(S.answers);
+  S.screen='result'; render();
+}
+
+function toggleBeliefs(){S.showBeliefs=!S.showBeliefs;render();}
 render();
 </script>
 </body>
