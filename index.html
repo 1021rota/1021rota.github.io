@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -105,6 +106,12 @@ const EJS_SVC  = 'service_qcah0cd';
 const EJS_TPL  = 'template_5np0yop';
 const MY_EMAIL = '1021rota@gmail.com';
 const CLARITY_CALL_LINK = 'mailto:1021rota@gmail.com?subject=Book%20My%20Free%20Clarity%20Call&body=Hi%20Isabell%2C%20I%20just%20took%20the%20archetype%20quiz%20and%20I%27d%20love%20to%20book%20my%20free%20Clarity%20Call.%20My%20archetype%20result%20was%3A%20';
+const ARCHETYPE_GUIDE_LINK = 'https://paypal.me/IsabellHarkins/7';
+const PILOT_STANDARD_LINK = 'https://paypal.me/IsabellHarkins/143';
+const PILOT_FOUNDING_LINK = 'https://paypal.me/IsabellHarkins/97';
+const PHONE_DISPLAY = '727-309-0452';
+const CALL_LINK = 'tel:+17273090452';
+const TEXT_LINK = 'sms:+17273090452';
 emailjs.init(EJS_KEY);
 
 const starsEl=document.getElementById('stars');
@@ -417,7 +424,8 @@ function render(){
   if(S.screen==='intro'){
     app.innerHTML=`<div class="screen">
       <div class="intro-icon">&#10022;</div>
-      <p class="eyebrow">A Sacred Archetype Reading</p>
+      <p class="eyebrow" style="margin-bottom:2px">Isabell &#8212; Your Story Guide</p>
+      <p class="eyebrow" style="opacity:.65;font-size:11px;margin-bottom:16px">A Sacred Archetype Reading</p>
       <h1 class="intro-title">Before the Ball,<br>She Was Just Ella.</h1>
       <p class="intro-sub">Somewhere between the fireplace and the fairytale, she forgot her own name.</p>
       <p class="intro-body">Every overthinker has an "Ella" chapter &#8212; the version of you that got renamed by circumstance and told to be smaller, useful, quiet. This 10-question reading reveals which Major Arcana archetype is running that old story in you right now &#8212; where it keeps you by the fire &#8212; and the first step back toward the version of you who already knows she's meant for the ball.</p>
@@ -466,18 +474,20 @@ function render(){
     const r=S.result;
     const isReferral=r.referral;
     const beliefs=r.limitingBeliefs.map(b=>`<div class="belief-chip${S.showBeliefs?' show':''}">${b}</div>`).join('');
+    const phoneRow = `<p class="cta-note">Or call/text Isabell directly at <a href="${CALL_LINK}" style="color:#c9a84c">${PHONE_DISPLAY}</a></p>`;
     const ctaSection = isReferral ? `
       <div class="referral-card">
-        <p class="eyebrow">A Note From Rose</p>
+        <p class="eyebrow">A Note From Isabell</p>
         <p class="referral-title">Your pattern runs deeper than this reading</p>
-        <p class="referral-body">The <strong style="color:#90b8e0">${r.name}</strong> energy you're carrying is real, and it's part of a bigger picture &#8212; the full 22-archetype map, not just the 12 patterns my Stuck to Momentum program was built around.<br><br>The complete <strong style="color:#90b8e0">Archetype Guide</strong> (all 22 patterns, shadow work, and NLP correction tools) is in the works. Email me and I'll make sure you're first to get it &#8212; and if overthinking is part of your story too, we can talk about a Clarity Call as well.</p>
-        <a href="mailto:${MY_EMAIL}?subject=Archetype Guide Waitlist - ${r.name}&body=Hi Rose, I completed the Major Arcana quiz and received ${r.name}. Please add me to the waitlist for the Archetype Guide." target="_blank" class="cta-btn cta-btn-blue">&#10022; Join the Archetype Guide Waitlist</a>
-        <p class="cta-note">Or email Rose directly at <a href="mailto:${MY_EMAIL}" style="color:#90b8e0">${MY_EMAIL}</a></p>
+        <p class="referral-body">The <strong style="color:#90b8e0">${r.name}</strong> energy you're carrying is real, and it's part of a bigger picture &#8212; the full 22-archetype map, not just the 12 patterns my Stuck to Momentum program was built around.<br><br>Go a little deeper with your complete <strong style="color:#90b8e0">Archetype Guide</strong> &#8212; your full archetype report with personalized insights and next steps &#8212; and if overthinking is part of your story too, we can talk about a Clarity Call as well.</p>
+        <a href="${ARCHETYPE_GUIDE_LINK}" target="_blank" class="cta-btn cta-btn-blue">&#10022; Get My Archetype Guide &#8212; $7</a>
+        <p class="cta-note">Add "${r.name}" to your PayPal note so Isabell can send the right report.</p>
+        ${phoneRow}
       </div>` : `
       <div class="cta-card">
         <div class="spots-badge">&#9679; Only 10 spots available</div>
         <p class="cta-title">Ready to move from ${r.name} into Momentum?</p>
-        <p class="cta-body">The <strong style="color:#e8e0d0">Stuck to Momentum 4-Week Pilot Program</strong> uses NLP tools to rewire the exact belief your archetype revealed today &#8212; and on your free Clarity Call, Rose will walk you through your full path forward, including the parts of this reading we're saving for that conversation.</p>
+        <p class="cta-body">The <strong style="color:#e8e0d0">Stuck to Momentum 4-Week Pilot Program</strong> uses NLP tools to rewire the exact belief your archetype revealed today &#8212; and on your free Clarity Call, Isabell will walk you through your full path forward, including the parts of this reading we're saving for that conversation.</p>
         <div class="session-box">
           <p class="session-box-title">&#10022; Founding Cohort &#8212; Live Sessions (NY, USA)</p>
           <div class="session-row"><span class="session-dot">&#9679;</span>Saturday, July 18 &middot; 5:00 PM</div>
@@ -493,7 +503,15 @@ function render(){
           <span class="feature-pill">Live group coaching</span>
         </div>
         <a href="${CLARITY_CALL_LINK}${encodeURIComponent(r.name)}" target="_blank" class="cta-btn">&#10022; Book My Free Clarity Call</a>
-        <p class="cta-note">This is where you'll get the rest of your reading, your pricing options, and see if the pilot is the right fit &#8212; no pressure, no pitch.</p>
+        <p class="cta-note" style="margin:0 0 12px">&#8212; or register directly &#8212;</p>
+        <div style="display:flex;gap:10px;margin-bottom:10px">
+          <a href="${PILOT_FOUNDING_LINK}" target="_blank" class="cta-btn cta-btn-gold" style="margin-bottom:0">$97 Founding Member</a>
+          <a href="${PILOT_STANDARD_LINK}" target="_blank" class="cta-btn cta-btn-ghost" style="margin-bottom:0">$143 Standard</a>
+        </div>
+        <a href="${ARCHETYPE_GUIDE_LINK}" target="_blank" class="cta-btn cta-btn-ghost">Go a little deeper &#8212; Archetype Guide, $7</a>
+        <p class="cta-note" style="margin-top:-4px">Add "${r.name}" to your PayPal note so Isabell can send the right report.</p>
+        <p class="cta-note">Booking the call is optional &#8212; register directly above if you're ready, or talk it through first, no pressure.</p>
+        ${phoneRow}
       </div>`;
 
     app.innerHTML=`<div class="screen">
@@ -522,7 +540,7 @@ function render(){
         <p class="sun-label">Your Path &#8594; ${isReferral ? 'Balance &amp; Abundance' : 'Clarity &amp; Confidence'}</p>
         <div class="locked-box">
           <div class="locked-icon">&#128274;</div>
-          <p class="locked-text">Your path into ${isReferral ? 'balance' : 'clarity and confidence'}, the exact NLP tools for ${r.name}, and what your ${isReferral ? 'balanced' : 'clear, confident'} expression looks like are saved for your free Clarity Call &#8212; where Rose walks you through it live.</p>
+          <p class="locked-text">Your path into ${isReferral ? 'balance' : 'clarity and confidence'}, the exact NLP tools for ${r.name}, and what your ${isReferral ? 'balanced' : 'clear, confident'} expression looks like are saved for your free Clarity Call &#8212; where Isabell walks you through it live.</p>
         </div>
       </div>
       ${ctaSection}
